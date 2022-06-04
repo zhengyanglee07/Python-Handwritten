@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Handwritten generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        img { height: 700px }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="text-center">Generate Handwritten Text</h1>
+
+        <div class="row py-5">
+            <div class="card col-6 p-0">
+                <div class="card-header text-center fw-bold">
+                    Try it now!
+                </div>
+                <div class="card-body">
+                    <textarea rows="5" class="w-100" id="text-input"></textarea>
+                    <button onclick="submitForm()" class="my-3 w-100 btn btn-outline-dark">Generate</button>
+                </div>
+            </div>
+            <div class="card col-6" id="imageList"></div>  
+        </div>
+    </div>
+</body>
+
+<script>
+    const elem = document.getElementById('imageList');
+    
+    const getInputText = () => {
+        const elem = document.getElementById('text-input');
+        return elem.value;
+    }
+
+    const appendImages = (imageSrc) => {
+        const imgElem = document.createElement('img');
+        const uniqSrc = imageSrc + '?' + (new Date()).getTime();
+        imgElem.src = uniqSrc;
+        elem.appendChild(imgElem);
+    }
+
+    const resetChild = () => {
+        elem.innerHTML = '';
+    }
+
+    const submitForm = () => {
+        fetch("http://www.zhengyang.my/generate", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'}, 
+            body: getInputText()
+          }).then(res => {
+             return res.json()
+          }).then(data => {
+              resetChild();
+              data.imgList.forEach(e => {
+                  appendImages(e);
+              });
+          });
+    }
+    
+</script>
+</html>
